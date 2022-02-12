@@ -1,32 +1,38 @@
 import { useState } from 'react';
 import './App.css';
+import SingleCard from './components/SingleCard';
 
 const cardImages = [
-  {"src": "/image/attenti-1.png"},
-  {"src": "/image/bravo-1.png"},
-  {"src": "/image/mazzate-1.png"},
-  {"src": "/image/pensieroso-1.png"},
-  {"src": "/image/pugno-1.png"},
-  {"src": "/image/tivoglio-1.png"},
+  {"src": "/image/attenti-1.jpg"},
+  {"src": "/image/bravo-1.jpg"},
+  {"src": "/image/mazzate-1.jpg"},
+  {"src": "/image/pensieroso-1.jpg"},
+  {"src": "/image/pugno-1.jpg"},
+  {"src": "/image/tivoglio-1.jpg"},
 ]
 
 function App() {
 
   const [cards, setCards] = useState([])
   const [turns, setTurns] = useState(0)
+  const [choiceOne, setChoiceOne] = useState(null)
+  const [choiceTwo, setChoiceTwo] = useState(null)
+
 
   // fn per mischiare le carte
   const mischiaCarte = () => {
     const mischiaCarte = [...cardImages, ...cardImages]
       .sort(() => Math.random() - 0.5 )
       .map((card) => ({...card, id: Math.random()}))
-    // console.log(mischiaCarte)
 
     setCards(mischiaCarte)
     setTurns(0)
   }
 
-  console.log('sonocards',cards, turns)
+  // gestione scelta
+  const handleChoice = (card) => {
+    choiceOne ? setChoiceTwo(card) : setChoiceOne(card)
+  }
 
   return (
     <div className="App">
@@ -34,12 +40,10 @@ function App() {
       <button onClick={mischiaCarte}>New Game</button>
       <div className="card-grid">
         {cards.map(card => (
-          <div className="card" key={card.id}>
-            <div>
-              <img className="front" src={card.src} alt="card front" />
-              <img className="back" src="/image/cover.png" alt="card back" />
-            </div>
-          </div>
+          <SingleCard 
+            key={card.id} 
+            card={card} 
+            handleChoice={handleChoice} />
         ))}
       </div>
     </div>
