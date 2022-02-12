@@ -1,14 +1,14 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import './App.css';
 import SingleCard from './components/SingleCard';
 
 const cardImages = [
-  {"src": "/image/attenti-1.jpg"},
-  {"src": "/image/bravo-1.jpg"},
-  {"src": "/image/mazzate-1.jpg"},
-  {"src": "/image/pensieroso-1.jpg"},
-  {"src": "/image/pugno-1.jpg"},
-  {"src": "/image/tivoglio-1.jpg"},
+  {"src": "/image/attenti-1.jpg", matched: false},
+  {"src": "/image/bravo-1.jpg", matched: false},
+  {"src": "/image/mazzate-1.jpg", matched: false},
+  {"src": "/image/pensieroso-1.jpg", matched: false},
+  {"src": "/image/pugno-1.jpg", matched: false},
+  {"src": "/image/tivoglio-1.jpg", matched: false},
 ]
 
 function App() {
@@ -34,6 +34,37 @@ function App() {
     choiceOne ? setChoiceTwo(card) : setChoiceOne(card)
   }
 
+  //confrontare le 2 carte selezionate
+  useEffect(() => {
+    if (choiceOne && choiceTwo) {
+      if (choiceOne.src === choiceTwo.src){
+        setCards( prevCards => {
+          return prevCards.map(card => {
+            if (card.src === choiceOne.src){
+              return {...card, matched: true}
+            }else{
+              return card
+            }
+          })
+        })
+        resetTurn()
+      } else {
+        setTimeout(() => resetTurn(), 900)
+        
+      }
+    }
+  }, [choiceOne, choiceTwo])
+
+  console.log(cards)
+
+  // resetta scelta se sbagliata e aumenta il contatore del turno
+  const resetTurn = () => {
+    setChoiceOne(null)
+    setChoiceTwo(null)
+    setTurns(prevTurns => prevTurns +1)
+
+  }
+
   return (
     <div className="App">
       <h1>Longo's Memory</h1>
@@ -43,7 +74,8 @@ function App() {
           <SingleCard 
             key={card.id} 
             card={card} 
-            handleChoice={handleChoice} />
+            handleChoice={handleChoice}
+            flipped={card === choiceOne || card === choiceTwo || card.matched} />
         ))}
       </div>
     </div>
